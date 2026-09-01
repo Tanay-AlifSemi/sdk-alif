@@ -30,8 +30,16 @@
 /* setting LPSPI0 as master and SPI1 instance as slave. */
 / {
 	aliases {
+	#if 0
 		master-spi = &lpspi0;
 		slave-spi = &spi1;
+	#endif	
+	
+	#if 1
+		master-spi = &spi1;
+		slave-spi = &lpspi0;
+	#endif	
+
 	};
 };
 
@@ -47,6 +55,7 @@
 
 &lpspi0 { /* lpspi0 */
 	status = "okay";
+	serial-target; //todo
 	/*
 	 * Cell 0: ALIF_DMA_ENCODE(channel, dma_group, handshake)
 	 *   - channel: Physical DMA channel (0 for TX, 1 for RX)
@@ -54,8 +63,12 @@
 	 *   - handshake: Enable hardware handshaking (1 for SPI)
 	 * Cell 1: Peripheral request number (13 for TX, 12 for RX)
 	 */
-	dmas = <&evtrtr2 ALIF_DMA_ENCODE(0, 1, 1) 13>,
-	       <&evtrtr2 ALIF_DMA_ENCODE(1, 1, 1) 12>;
+//	dmas = <&evtrtr2 ALIF_DMA_ENCODE(0, 1, 1) 13>,
+//	       <&evtrtr2 ALIF_DMA_ENCODE(1, 1, 1) 12>;
+
+	dmas = <&evtrtr2 ALIF_DMA_ENCODE(0, 2, 1) 25>,
+	       <&evtrtr2 ALIF_DMA_ENCODE(1, 2, 1) 24>;
+
 	dma-names = "txdma", "rxdma";
 
 #if SPI_MASTER_SS_SW_CONTROLLED_GPIO
@@ -70,7 +83,7 @@
 
 &spi1 { /* spi1 */
 	status = "okay";
-	serial-target;
+	//serial-target; //todo
 	/*
 	 * Cell 0: ALIF_DMA_ENCODE(channel, dma_group, handshake)
 	 *   - channel: Physical DMA channel (2 for TX, 3 for RX)
