@@ -8,16 +8,16 @@ Overview
 
 This sample demonstrates using the Designware SPI driver.
 This sample uses 2 SPI instances one as master and other slave.
-By default it uses LPSPI as master and SPI0 as slave.
+B1 overlay can select LPSPI master + SPI1 slave, or SPI1 master + LPSPI slave.
 
 It runs two checks:
 
 * Timed bench: 10 full-duplex transfers of ``BUFF_SIZE`` words at 10 MHz
-  (exact SCK on both 160 MHz and 240 MHz LPSPI). One warmup xfer is discarded.
+  (exact SCK on SPI1 HCLK 80 and 120 MHz). One warmup xfer is discarded.
   CPU time is ``k_cycle_get_32()`` around ``spi_transceive()`` only.
-* SCLK sweep: one transfer each at 5/8/10/20 MHz only — these are the rates
-  whose actual SCK is the same in both modes (BAUDR even). Both MOSI and
-  MISO must match.
+* SCLK sweep: one transfer each at 5/10/20 MHz — same actual SCK in both
+  modes (BAUDR even). Both MOSI and MISO must match. LPSPI slave full-duplex
+  TRM cap is SSI/12 (13.3 MHz @ 160, 20 MHz @ 240).
 
 .. note::
 
@@ -49,15 +49,17 @@ Sample Output
 ::
 
    SPI mode: SPARK TURBO (SYS_CLOCK_HW_CYCLES_PER_SEC=240000000)
+   Pairing: SPI1 master + LPSPI slave (full duplex)
+   Master SSI (HCLK get_rate)=120000000  BAUDR(10MHz)=12  actual SCK=10000000
+   Slave SSI (LPSPI get_rate)=240000000  TRM 12x max SCK=20000000
 
-   === SPI bench: 10 x 800 bytes @ 10000000 Hz ===
-     req 10000000 Hz -> BAUDR=16  actual SCK=10000000 Hz   (or BAUDR=24 @ turbo)
+   === SPI bench: 10 x 800 bytes ===
+     req 10000000 Hz -> BAUDR=12  actual SCK=10000000 Hz
    BENCH PASS
 
-   === SPI SCLK sweep (1 xfer; rates identical on 160 and 240 MHz SSI) ===
+   === SPI SCLK sweep (1 xfer; same actual SCK on HCLK 80 and 120) ===
       5 MHz : PASS
-      8 MHz : PASS
      10 MHz : PASS
-     20 MHz : FAIL   (MISO)
-   Max SCLK both directions PASS: 10 MHz
+     20 MHz : PASS or FAIL (LPSPI slave 12x edge)
+   Max SCLK both directions PASS: 10 or 20 MHz
    SPI tests completed
