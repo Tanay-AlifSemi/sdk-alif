@@ -22,13 +22,32 @@ Currently supported Flash devices are :
 Building and Running
 ********************
 
+Functional tests, then a timed throughput bench and an even-BAUDR SCK sweep.
+``k_cycle_get_32()`` wraps only ``flash_erase`` / ``flash_write`` / ``flash_read``
+(and XiP ``memcpy`` when ``CONFIG_ALIF_OSPI_FLASH_XIP=y``).
+
+Erase and program time are flash ``tSE`` / ``tPP`` (not SCK). Read and XiP
+are the numbers that can move with turbo. TRM BAUDR is even, so 80 MHz SCK
+from 240 MHz SSI is skipped (``240/80=3`` becomes 2 → 120 MHz). Turbo lists
+**120 MHz** (``240/2``, BAUDR=2, baud2-delay on) as its own step; hang or FAIL
+is a valid result. Probe OSPI0 SCLK on P4_2. The sweep waits 3 s before that
+step so the logic analyzer can be armed.
+
+Fair same-SCK compare is **40 MHz** (``160/4`` and ``240/6``). Turbo-only
+tries are **60 MHz** (``240/4``) and **120 MHz** (``240/2``). Normal-only
+try is **80 MHz** (``160/2``).
+
+Full-chip erase (Test 2) is off by default (``RUN_FULL_CHIP_ERASE``).
+
 Example command to build:
 
 .. code-block:: console
 
-   west build -b alif_b1_dk/ab1c1f4m51820hh/rtss_he -S ospi-flash ../alif/samples/drivers/spi_flash -p
-   OR
-   west build -b alif_b1_dk/ab1c1f4m51820hh/rtss_he ../alif/samples/drivers/spi_flash -p -- -DSNIPPET=ospi-flash
+   west build -p always -b alif_b1_dk/ab1c1f4m51820ph0/rtss_he \
+     -S ospi-flash ../alif/samples/drivers/spi_flash/
+
+   west build -p always -b alif_b1_dk/ab1c1f4m51820ph0/rtss_he \
+     -S ospi-flash -S spark-turbo ../alif/samples/drivers/spi_flash/
 
 Sample Output
 =============
