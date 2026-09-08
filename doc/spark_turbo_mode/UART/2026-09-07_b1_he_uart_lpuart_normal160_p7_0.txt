@@ -1,0 +1,207 @@
+# Normal 160 — Zephyr d58e56f5ef71
+# -S spark-turbo omitted
+# Jumpers: UART0 P8_1<->P8_0, LPUART P7_1<->P7_0
+
+*** Booting Zephyr OS build d58e56f5ef71 ***
+
+======== UART spark turbo check (ns16550 driver) ========
+HE / SysTick : 160000000 Hz  [normal 160]
+UART         : uart@4901a000 (console) + uart0 DUT
+SCLK (PCLK)  : 40000000 Hz
+requested    : 115200 baud
+uart_config  : 115200 baud
+driver DL/DLF: 21 / 11  (same formula as uart_ns16550)
+actual baud  : 115273  (error 633 ppm)
+result       : uart_config MATCH  (host must stay 115200)
+==========================================================
+
+======== UART0 baud sweep (driver MCR loopback) ========
+uart_configure + uart_line_ctrl_set(LOOPBACK). Console stays UART2.
+
++----------+-----+-----+----------+--------+------------------+
+|     baud |    DL | DLF |   actual |    ppm | result           |
++----------+-----+-----+----------+--------+------------------+
+|     9600 |   260 |   7 |     9599 |   -104 | PASS             |
+|   115200 |    21 |  11 |   115273 |    633 | PASS             |
+|   230400 |    10 |  14 |   229885 |  -2235 | PASS             |
+|   460800 |     5 |   7 |   459770 |  -2235 | PASS             |
+|   921600 |     2 |  11 |   930232 |     45 | PASS             |
+|  1500000 |     1 |  11 |  1481481 |   -892 | PASS             |
+|  2000000 |     1 |   4 |  2000000 |      0 | PASS             |
+|  2500000 |     1 |   0 |  2500000 |      0 | PASS             |
+|  3000000 |     - |   - |        - |      - | SKIP (DL=0)     |
+|  3750000 |     - |   - |        - |      - | SKIP (DL=0)     |
+|  4000000 |     - |   - |        - |      - | SKIP (DL=0)     |
++----------+-----+-----+----------+--------+------------------+
+MAX loopback PASS : 2500000 baud
+SCLK/16 theor max : 2500000 baud
+Note: MCR loopback via uart_ns16550 line_ctrl. Pin not proven here.
+================================================
+
+======== UART0 TX-only burst (logic analyzer) ========
+uart_configure + uart_poll_out(0x55). Console UART2 P5_3.
+Probe LA on UART0 TX = P8_1
+Pattern: 0x55 x 32 x 3 reps
+Arm LA on P8_1 falling edge. Bursts in 3 s...
+  115200  -> bit ~8.68 us   (both modes)
+  2500000 -> bit 400 ns     (fair max)
+  3750000 -> bit 267 ns     (turbo only)
+  sending 115200 baud on P8_1 ...
+  sending 2500000 baud on P8_1 ...
+ SKIP baud: 3750000 (DL=0)
+LA bursts done on P8_1:
+   115200 baud : sent on P8_1
+  2500000 baud : sent on P8_1
+  3750000 baud : SKIP (DL=0)
+Measure bit width on P8_1. Do not use UART decode.
+=====================================================
+
+======== UART0 external loopback (wire, ns16550) ========
+Jumper: P8_1 (UART0 TX) --- P8_0 (UART0 RX)
+uart_configure + uart_poll_out/in. LOOPBACK off.
+Waiting 5 s for the jumper...
+External loopback (P8_1->P8_0), 64-byte pattern
+FAIL (-2) = no RX (jumper missing). FAIL (-3) = data mismatch.
+
++----------+-----+-----+----------+--------+------------------+
+|     baud |    DL | DLF |   actual |    ppm | result           |
++----------+-----+-----+----------+--------+------------------+
+|     9600 |   260 |   7 |     9599 |   -104 | PASS             |
+|   115200 |    21 |  11 |   115273 |    633 | PASS             |
+|   230400 |    10 |  14 |   229885 |  -2235 | PASS             |
+|   460800 |     5 |   7 |   459770 |  -2235 | PASS             |
+|   921600 |     2 |  11 |   930232 |     45 | PASS             |
+|  1500000 |     1 |  11 |  1481481 |   -892 | PASS             |
+|  2000000 |     1 |   4 |  2000000 |      0 | PASS             |
+|  2500000 |     1 |   0 |  2500000 |      0 | PASS             |
+|  3000000 |     - |   - |        - |      - | SKIP (DL=0)     |
+|  3750000 |     - |   - |        - |      - | SKIP (DL=0)     |
+|  4000000 |     - |   - |        - |      - | SKIP (DL=0)     |
++----------+-----+-----+----------+--------+------------------+
+MAX loopback PASS : 2500000 baud
+SCLK/16 theor max : 2500000 baud
+Note: TX left P8_1 and came back on P8_0 (uart_ns16550).
+================================================
+
+======== UART0 throughput (P8_1->P8_0, ns16550 IRQ) ========
+uart_fifo_fill / uart_fifo_read in ISR. k_cycle_get_32() around one xfer.
+1024 B x 10 (1 warmup dropped). 8N1 = 10 bits/byte.
+Fair: 115200 and 2.5M. 3.75M turbo only.
+
++----------+----------+--------+------------+----------+--------+----------+
+|     baud |   actual | result |     cycles |       us |   kB/s |   Mbit/s |
++----------+----------+--------+------------+----------+--------+----------+
+|   115200 |   115273 | PASS   |  142294097 |   889338 |     11 |    0.09 |
+    scored 10 x 1024 B  wire_us=888325  (8N1, one way)
+|  2500000 |  2500000 | PASS   |    7709001 |    48181 |    212 |    1.70 |
+    scored 10 x 1024 B  wire_us=40960  (8N1, one way)
+|  3750000 |        - | SKIP   |          - |        - |      - |        - |
++----------+----------+--------+------------+----------+--------+----------+
+IRQ + FIFO path (same APIs as alif/tests/drivers/uart).
+================================================
+
+======== LPUART check (ns16550, SCLK=HE) ========
+HE / SysTick : 160000000 Hz  [normal 160]
+LPUART       : uart@43008000 @ 0x43008000
+SCLK (HE)    : 160000000 Hz  (not PCLK)
+theor max    : 10000000 baud (SCLK/16)
+Pins         : P7_1 TX_B, P7_0 RX_B  (same group B)
+Console stays UART2 P5_3 @ 115200.
+================================================
+
+======== LPUART baud sweep (driver MCR loopback) ========
+
++----------+-----+-----+----------+--------+------------------+
+|     baud |    DL | DLF |   actual |    ppm | result           |
++----------+-----+-----+----------+--------+------------------+
+|     9600 |  1041 |  11 |     9599 |   -104 | PASS             |
+|   115200 |    86 |  13 |   115190 |    -86 | PASS             |
+|   230400 |    43 |   6 |   230547 |    638 | PASS             |
+|   460800 |    21 |  11 |   461095 |    640 | PASS             |
+|   921600 |    10 |  14 |   919540 |  -2235 | PASS             |
+|  1500000 |     6 |  11 |  1495327 |   -252 | PASS             |
+|  2000000 |     5 |   0 |  2000000 |      0 | PASS             |
+|  2500000 |     4 |   0 |  2500000 |      0 | PASS             |
+|  3000000 |     3 |   5 |  3018867 |    562 | PASS             |
+|  3750000 |     2 |  11 |  3720930 |    265 | PASS             |
+|  4000000 |     2 |   8 |  4000000 |      0 | PASS             |
+|  5000000 |     2 |   0 |  5000000 |      0 | PASS             |
+| 10000000 |     1 |   0 | 10000000 |      0 | PASS             |
+| 15000000 |     - |   - |        - |      - | SKIP (DL=0)     |
++----------+-----+-----+----------+--------+------------------+
+MAX loopback PASS : 10000000 baud
+SCLK/16 theor max : 10000000 baud
+LPUART MCR loopback. SCLK=HE.
+================================================
+
+======== LPUART TX-only burst (logic analyzer) ========
+Probe LA on P7_1. 0x55 x 4 x 1. LOOP off.
+Leave P7_1--P7_0 jumper OFF until the wire section.
+  115200   -> bit ~8.68 us
+  2500000  -> bit 400 ns
+  10000000 -> bit 100 ns
+  15000000 -> bit 67 ns (turbo 240)
+  sending 115200 baud on P7_1 (4 B) ...
+  P7_1 115200 done
+  sending 2500000 baud on P7_1 (4 B) ...
+  P7_1 2500000 done
+  sending 3750000 baud on P7_1 (4 B) ...
+  P7_1 3750000 done
+  sending 10000000 baud on P7_1 (4 B) ...
+  P7_1 10000000 done
+ SKIP baud: 15000000 (DL=0)
+LA bursts done on P7_1. Measure bit width, no UART decode.
+=====================================================
+
+======== LPUART external loopback (wire, IRQ) ========
+NOW jumper P7_1 (TX) --- P7_0 (RX). Waiting 5 s...
+FAIL(-2) = no RX (jumper off). That is not a hang.
+
++----------+-----+-----+----------+--------+------------------+
+|     baud |    DL | DLF |   actual |    ppm | result           |
++----------+-----+-----+----------+--------+------------------+
+|     9600 |  1041 |  11 |     9599 |   -104 | PASS             |
+|   115200 |    86 |  13 |   115190 |    -86 | PASS             |
+|   230400 |    43 |   6 |   230547 |    638 | PASS             |
+|   460800 |    21 |  11 |   461095 |    640 | PASS             |
+|   921600 |    10 |  14 |   919540 |  -2235 | PASS             |
+|  1500000 |     6 |  11 |  1495327 |   -252 | PASS             |
+|  2000000 |     5 |   0 |  2000000 |      0 | PASS             |
+|  2500000 |     4 |   0 |  2500000 |      0 | PASS             |
+|  3000000 |     3 |   5 |  3018867 |    562 | PASS             |
+|  3750000 |     2 |  11 |  3720930 |    265 | PASS             |
+|  4000000 |     2 |   8 |  4000000 |      0 | PASS             |
+|  5000000 |     2 |   0 |  5000000 |      0 | PASS             |
+| 10000000 |     1 |   0 | 10000000 |      0 | PASS             |
+| 15000000 |     - |   - |        - |      - | SKIP (DL=0)     |
++----------+-----+-----+----------+--------+------------------+
+MAX loopback PASS : 10000000 baud
+SCLK/16 theor max : 10000000 baud
+LPUART TX left P7_1 and came back on P7_0.
+================================================
+
+======== LPUART throughput (P7_1->P7_0, ns16550 IRQ) ========
+SCLK=HE. Fair vs UART0: 115200 and 2.5M. LPUART: 10M both, 15M turbo.
++----------+----------+--------+------------+----------+--------+----------+
+|     baud |   actual | result |     cycles |       us |   kB/s |   Mbit/s |
++----------+----------+--------+------------+----------+--------+----------+
+|   115200 |   115190 | PASS   |  142383630 |   889897 |     11 |    0.09 |
+    scored 10 x 1024 B  wire_us=888966  (8N1, one way)
+|  2500000 |  2500000 | PASS   |    6713979 |    41962 |    244 |    1.95 |
+    scored 10 x 1024 B  wire_us=40960  (8N1, one way)
+|  3750000 |  3720930 | PASS   |    4560025 |    28500 |    359 |    2.87 |
+    scored 10 x 1024 B  wire_us=27520  (8N1, one way)
+| 10000000 | 10000000 | PASS   |    1822199 |    11388 |    899 |    7.19 |
+    scored 10 x 1024 B  wire_us=10240  (8N1, one way)
+| 15000000 |        - | SKIP   |          - |        - |      - |        - |
++----------+----------+--------+------------+----------+--------+----------+
+================================================
+
+LED state: OFF
+UART normal160  SCLK=40000000  DL=21 DLF=11  baud=115273  MATCH
+LED state: ON
+UART normal160  SCLK=40000000  DL=21 DLF=11  baud=115273  MATCH
+LED state: OFF
+UART normal160  SCLK=40000000  DL=21 DLF=11  baud=115273  MATCH
+
+

@@ -1,0 +1,45 @@
+LPUART P2_0 RX_A — excerpt (do not store the full ISR flood)
+Board: alif_b1_dk rtss_he   blinky UART check   HE 160
+Mux: P7_1 LPUART_TX_B + P2_0 LPUART_RX_A  (HW repro, not the working pair)
+See ../lpuart_p2_0_hw_report.md
+
+------------------------------------------------------------------------
+1) Jumper OFF, uart_irq_rx_enable — RX ISR storm (halt still works)
+------------------------------------------------------------------------
+
+Pins         : P7_1 TX_B, P2_0 RX_A  (HW repro mux)
+
+MCR with P2_0 muxed (LOOP=1, pad unused) still leaked at mid bauds:
+  115200 / 230400 / 460800  FAIL (-3)
+  other rates PASS including 10 Mbps
+
+Wire IRQ at 9600, jumper still OFF:
+
+  irqs on  baud=9600 n=64
+  isr cb=1       tx_i=0 rx_i=0 txrdy=0 rxrdy=1  fillp=0 readp=0
+  isr cb=5       tx_i=0 rx_i=0 txrdy=0 rxrdy=5  fillp=0 readp=0
+  isr cb=5000    tx_i=0 rx_i=0 txrdy=0 rxrdy=5000        readp=0
+  isr cb=1140000 tx_i=0 rx_i=0 txrdy=0 rxrdy=1140000     readp=0
+
+  uart_irq_rx_ready() true, uart_fifo_read() returns 0 (LSR.DR=0).
+  IIR never clears. Thread never reaches k_sem_take timeout.
+  Full log was ~1e6 ISR printks; not committed.
+
+After empty-FIFO abort (8 empty reads): FAIL(-2) per baud, then LED blink.
+That is a test guard, not a pad fix.
+
+------------------------------------------------------------------------
+2) Jumper ON P7_1 TX --- P2_0 RX — APB lock (halt fails)
+------------------------------------------------------------------------
+
+Debugger (ULink-Pro error)
+
+  ERROR(TAD9-NAL64):
+  ! Unable to stop device Cortex-M55
+  ! Target in wrong state/mode.
+
+Hardware reset to recover. Same SoC/driver as P7_0 (which PASSes).
+
+Working pair: P7_1 TX_B + P7_0 RX_B
+  2026-09-07_b1_he_uart_lpuart_normal160_p7_0.txt
+  2026-09-07_b1_he_uart_lpuart_turbo240_p7_0.txt
