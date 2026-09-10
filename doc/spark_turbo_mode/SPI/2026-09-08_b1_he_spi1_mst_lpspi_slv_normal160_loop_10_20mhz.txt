@@ -1,0 +1,196 @@
+# SPI1 master + LPSPI slave  |  Normal 160  |  10-iter loop (same Zephyr ba68cc2b03ab)
+# 10 MHz PASS both dirs. 20 MHz FAIL MISO 5A->B4 (MOSI still PASS). Matches bench sweep.
+
+######## normal 10 MHz (div=8, master SSI HCLK 80) ########
+*** Booting Zephyr OS build ba68cc2b03ab ***
+Slave Transceive Iter= 10
+[00:00:00.000,000] <inf> dma_pl330: Device dma2@400c0000 initialized
+[00:00:00.000,000] <inf> dma_alif_event_router: event-router@400e2000: Initialized at 0x400e2000, 32 channels, 4 dma-groups
+[00:00:00.006,000] <inf> spi_dw: clk control config clk freq :160000000
+[00:00:00.006,000] <inf> spi_dw: Installed slave config 0x2000f17c: ws/dfs 8/1, mode 0/0/0
+Master Transceive Iter= 10
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+SUCCESS: SPI Master RX & Slave TX DATA IS MATCHING: 0
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 9
+[00:00:00.106,000] <wrn> alif_clock_control: Clock enable not supported
+
+[00:00:00.106,000] <inf> spi_dw: clk control config clk freq :80000000
+[00:00:00.106,000] <inf> spi_dw: Installed master config 0x2000f55c: freq 10000000Hz (div = 8), ws/dfs 8/1, mode 0/0/0, slave 0
+Master Transceive Iter= 9
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+SUCCESS: SPI Master RX & Slave TX DATA IS MATCHING: 0
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 8
+Master Transceive Iter= 8
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+SUCCESS: SPI Master RX & Slave TX DATA IS MATCHING: 0
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 7
+Master Transceive Iter= 7
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+SUCCESS: SPI Master RX & Slave TX DATA IS MATCHING: 0
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 6
+Master Transceive Iter= 6
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+SUCCESS: SPI Master RX & Slave TX DATA IS MATCHING: 0
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 5
+Master Transceive Iter= 5
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+SUCCESS: SPI Master RX & Slave TX DATA IS MATCHING: 0
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 4
+Master Transceive Iter= 4
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+SUCCESS: SPI Master RX & Slave TX DATA IS MATCHING: 0
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 3
+Master Transceive Iter= 3
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+SUCCESS: SPI Master RX & Slave TX DATA IS MATCHING: 0
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 2
+Master Transceive Iter= 2
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+SUCCESS: SPI Master RX & Slave TX DATA IS MATCHING: 0
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 1
+Master Transceive Iter= 1
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+SUCCESS: SPI Master RX & Slave TX DATA IS MATCHING: 0
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transfer Successfully Completed
+Master Transfer Successfully Completed
+
+
+
+
+
+######## normal 20 MHz (div=4)  NOT working ########
+... iters 9..1 same: MISO FAIL 5A->B4, MOSI PASS ...
+5A<<1 = B4. Clock is real; sample/hold wrong (LPSPI slave 160/20 = 8x, TRM TX+RX wants 12x).
+
+
+*** Booting Zephyr OS build ba68cc2b03ab ***
+Slave Transceive Iter= 10
+[00:00:00.000,000] <inf> dma_pl330: Device dma2@400c0000 initialized
+[00:00:00.000,000] <inf> dma_alif_event_router: event-router@400e2000: Initialized at 0x400e2000, 32 channels, 4 dma-groups
+[00:00:00.006,000] <inf> spi_dw: clk control config clk freq :160000000
+[00:00:00.006,000] <inf> spi_dw: Installed slave config 0x2000f17c: ws/dfs 8/1, mode 0/0/0
+Master Transceive Iter= 10
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: b4b40000 b4b40002 b4b40004 b4b40006 b4b40008
+ERROR: SPI Master RX & Slave TX DATA NOT MATCHING: 90
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 9
+[00:00:00.106,000] <wrn> alif_clock_control: Clock enable not supported
+
+[00:00:00.106,000] <inf> spi_dw: clk control config clk freq :80000000
+[00:00:00.106,000] <inf> spi_dw: Installed master config 0x2000f55c: freq 20000000Hz (div = 4), ws/dfs 8/1, mode 0/0/0, slave 0
+Master Transceive Iter= 9
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: b4b40000 b4b40002 b4b40004 b4b40006 b4b40008
+ERROR: SPI Master RX & Slave TX DATA NOT MATCHING: 90
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 8
+Master Transceive Iter= 8
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: b4b40000 b4b40002 b4b40004 b4b40006 b4b40008
+ERROR: SPI Master RX & Slave TX DATA NOT MATCHING: 90
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 7
+Master Transceive Iter= 7
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: b4b40000 b4b40002 b4b40004 b4b40006 b4b40008
+ERROR: SPI Master RX & Slave TX DATA NOT MATCHING: 90
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 6
+Master Transceive Iter= 6
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: b4b40000 b4b40002 b4b40004 b4b40006 b4b40008
+ERROR: SPI Master RX & Slave TX DATA NOT MATCHING: 90
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 5
+Master Transceive Iter= 5
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: b4b40000 b4b40002 b4b40004 b4b40006 b4b40008
+ERROR: SPI Master RX & Slave TX DATA NOT MATCHING: 90
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 4
+Master Transceive Iter= 4
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: b4b40000 b4b40002 b4b40004 b4b40006 b4b40008
+ERROR: SPI Master RX & Slave TX DATA NOT MATCHING: 90
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 3
+Master Transceive Iter= 3
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: b4b40000 b4b40002 b4b40004 b4b40006 b4b40008
+ERROR: SPI Master RX & Slave TX DATA NOT MATCHING: 90
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 2
+Master Transceive Iter= 2
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: b4b40000 b4b40002 b4b40004 b4b40006 b4b40008
+ERROR: SPI Master RX & Slave TX DATA NOT MATCHING: 90
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transceive Iter= 1
+Master Transceive Iter= 1
+Master wrote: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+Master receive: b4b40000 b4b40002 b4b40004 b4b40006 b4b40008
+ERROR: SPI Master RX & Slave TX DATA NOT MATCHING: 90
+slave wrote: 5a5a0000 5a5a0001 5a5a0002 5a5a0003 5a5a0004
+slave read: a5a50000 a5a50001 a5a50002 a5a50003 a5a50004
+SUCCESS: SPI Master TX & Slave RX DATA IS MATCHING: 0
+Slave Transfer Successfully Completed
+Master Transfer Successfully Completed

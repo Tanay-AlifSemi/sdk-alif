@@ -1,0 +1,34 @@
+# LPSPI master + SPI1 slave  |  Normal 160  |  bench @ 10 MHz + sweep
+# Zephyr ba68cc2b03ab
+# Quote this for pairing 1 10 MHz throughput and 5/8/10/20 sweep.
+
+*** Booting Zephyr OS build ba68cc2b03ab ***
+SPI mode: normal (SYS_CLOCK_HW_CYCLES_PER_SEC=160000000)
+LPSPI SSI (get_rate)=160000000  BAUDR(10MHz)=16  actual SCK=10000000
+[00:00:00.000,000] <inf> dma_pl330: Device dma2@400c0000 initialized
+[00:00:00.000,000] <inf> dma_alif_event_router: event-router@400e2000: Initialized at 0x400e2000, 32 channels, 4 dma-groups
+[00:00:00.014,000] <wrn> alif_clock_control: Clock enable not supported
+
+
+=== SPI bench: 10 x 800 bytes ===
+  req 10000000 Hz -> BAUDR=16  actual SCK=10000000 Hz
+CPU: k_cycle_get_32() around spi_transceive() only (no memset/memcmp/sleep)
+  transfers     : 10 (after 1 warmup)
+  bytes/xfer    : 800 (one direction)
+  total bytes   : 8000 (one direction)
+  CPU cycles    : 1096050
+  time          : 6850 us  (k_cyc_to_ns)  check 6850 us (cyc*1e6/SYS_CLOCK)
+  wire (ideal)  : 6400 us at actual SCK 10000000 Hz
+  us/transfer   : 685
+  throughput    : 9343 kbit/s (payload, one direction)
+  full-duplex   : 18686 kbit/s (both directions)
+BENCH PASS
+
+=== SPI SCLK sweep (1 xfer; rates identical on 160 and 240 MHz SSI) ===
+   5 MHz : PASS  cyc=212527  1328 us  wire=1280 us  BAUDR=32 actual=5000000 Hz
+   8 MHz : PASS  cyc=135699  848 us  wire=800 us  BAUDR=20 actual=8000000 Hz
+  10 MHz : PASS  cyc=110095  688 us  wire=640 us  BAUDR=16 actual=10000000 Hz
+MISO (master RX / slave TX) mismatch: exp 5a5a0000 5a5a0001 5a5a0002  got 5a7e0000 7f7f0001 7f7f0002
+  20 MHz : FAIL  cyc=58500  365 us  wire=320 us  BAUDR=8 actual=20000000 Hz
+Max SCLK both directions PASS: 10 MHz
+SPI tests completed

@@ -1,0 +1,38 @@
+# LPSPI master + SPI1 slave  |  Turbo 240  |  extra bench @ 16 MHz + wider sweep
+# Zephyr ba68cc2b03ab  Same pairing as 10 MHz logs (20 MHz MISO fail 5A->7F).
+# Firmware did not print LPSPI SSI / BAUDR in the header.
+
+*** Booting Zephyr OS build ba68cc2b03ab ***
+SPI mode: SPARK TURBO (SYS_CLOCK_HW_CYCLES_PER_SEC=240000000)
+[00:00:00.000,000] <inf> dma_pl330: Device dma2@400c0000 initialized
+[00:00:00.000,000] <inf> dma_alif_event_router: event-router@400e2000: Initialized at 0x400e2000, 32 channels, 4 dma-groups
+[00:00:00.009,000] <wrn> alif_clock_control: Clock enable not supported
+
+
+=== SPI bench: 10 x 800 bytes @ 16000000 Hz ===
+CPU: k_cycle_get_32() around master spi_transceive only
+  transfers     : 10
+  bytes/xfer    : 800 (one direction)
+  total bytes   : 8000 (one direction)
+  CPU cycles    : 1114072
+  time          : 4641 us
+  wire (ideal)  : 4000 us
+  us/transfer   : 464
+  throughput    : 13790 kbit/s (payload, one direction)
+  full-duplex   : 27580 kbit/s (both directions)
+BENCH PASS
+
+=== SPI SCLK sweep (1 xfer, both directions must PASS) ===
+   10 MHz : PASS  master_cyc=175891 (732 us, wire~640 us)
+   15 MHz : PASS  master_cyc=124683 (519 us, wire~426 us)
+   16 MHz : PASS  master_cyc=111850 (466 us, wire~400 us)
+MISO (master RX / slave TX) mismatch: exp 5a5a0000 5a5a0001 5a5a0002  got 7f7f0000 7f7f0001 7f7f0003
+   20 MHz : FAIL  master_cyc=89282 (372 us, wire~320 us)
+MISO (master RX / slave TX) mismatch: exp 5a5a0000 5a5a0001 5a5a0002  got 2d2d0000 2d2d8000 2d2d0001
+   22 MHz : FAIL  master_cyc=76505 (318 us, wire~290 us)
+MISO (master RX / slave TX) mismatch: exp 5a5a0000 5a5a0001 5a5a0002  got 2d2d0000 2d2d8000 2d2d0001
+   24 MHz : FAIL  master_cyc=76506 (318 us, wire~266 us)
+MISO (master RX / slave TX) mismatch: exp 5a5a0000 5a5a0001 5a5a0002  got 2d2d0080 2d2d8000 2d2d0001
+   30 MHz : FAIL  master_cyc=63502 (264 us, wire~213 us)
+Max SCLK both directions PASS: 16 MHz
+SPI tests completed

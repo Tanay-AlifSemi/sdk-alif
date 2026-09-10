@@ -1,0 +1,51 @@
+# SPI1 master + LPSPI slave  |  Normal 160  |  bench @ 10 MHz + sweep 5/10/20
+# Zephyr ba68cc2b03ab
+# Quote this for pairing 2 10 MHz throughput. Max PASS 10 MHz. 20 MHz MISO 5A->B4.
+
+*** Booting Zephyr OS build ba68cc2b03ab ***
+SPI mode: normal (SYS_CLOCK_HW_CYCLES_PER_SEC=160000000)
+Pairing: SPI1 master + LPSPI slave (full duplex)
+Master SSI (HCLK get_rate)=80000000  BAUDR(10MHz)=8  actual SCK=10000000
+Slave SSI (LPSPI get_rate)=160000000  TRM 12x max SCK=13333333
+[00:00:00.000,000] <inf> dma_pl330: Device dma2@400c0000 initialized
+[00:00:00.000,000] <inf> dma_alif_event_router: event-router@400e2000: Initialized at 0x400e2000, 32 channels, 4 dma-groups
+[00:00:00.025,000] <inf> spi_dw: clk control config clk freq :160000000
+[00:00:00.025,000] <inf> spi_dw: Installed slave config 0x2000be14: ws/dfs 8/1, mode 0/0/0
+
+=== SPI bench: 10 x 800 bytes ===
+  req 10000000 Hz -> BAUDR=8  actual SCK=10000000 Hz
+[00:00:00.132,000] <wrn> alif_clock_control: Clock enable not supported
+
+[00:00:00.132,000] <inf> spi_dw: clk control config clk freq :80000000
+[00:00:00.132,000] <inf> spi_dw: Installed master config 0x2000be3c: freq 10000000Hz (div = 8), ws/dfs 8/1, mode 0/0/0, slave 0
+CPU: k_cycle_get_32() around spi_transceive() only (no memset/memcmp/sleep)
+  transfers     : 10 (after 1 warmup)
+  bytes/xfer    : 800 (one direction)
+  total bytes   : 8000 (one direction)
+  CPU cycles    : 1101562
+  time          : 6884 us  (k_cyc_to_ns)  check 6884 us (cyc*1e6/SYS_CLOCK)
+  wire (ideal)  : 6400 us at actual SCK 10000000 Hz
+  us/transfer   : 688
+  throughput    : 9296 kbit/s (payload, one direction)
+  full-duplex   : 18592 kbit/s (both directions)
+BENCH PASS
+
+=== SPI SCLK sweep (1 xfer; same actual SCK on HCLK 80 and 120) ===
+[00:00:00.741,000] <wrn> alif_clock_control: Clock enable not supported
+
+[00:00:00.741,000] <inf> spi_dw: clk control config clk freq :80000000
+[00:00:00.741,000] <inf> spi_dw: Installed master config 0x2000be28: freq 5000000Hz (div = 16), ws/dfs 8/1, mode 0/0/0, slave 0
+   5 MHz : PASS  cyc=215599  1347 us  wire=1280 us  BAUDR=16 actual=5000000 Hz
+[00:00:00.799,000] <wrn> alif_clock_control: Clock enable not supported
+
+[00:00:00.799,000] <inf> spi_dw: clk control config clk freq :80000000
+[00:00:00.799,000] <inf> spi_dw: Installed master config 0x2000be3c: freq 10000000Hz (div = 8), ws/dfs 8/1, mode 0/0/0, slave 0
+  10 MHz : PASS  cyc=113238  707 us  wire=640 us  BAUDR=8 actual=10000000 Hz
+[00:00:00.857,000] <wrn> alif_clock_control: Clock enable not supported
+
+[00:00:00.857,000] <inf> spi_dw: clk control config clk freq :80000000
+[00:00:00.857,000] <inf> spi_dw: Installed master config 0x2000be28: freq 20000000Hz (div = 4), ws/dfs 8/1, mode 0/0/0, slave 0
+MISO (master RX / slave TX) mismatch: exp 5a5a0000 5a5a0001 5a5a0002  got b4b40000 b4b40002 b4b40004
+  20 MHz : FAIL  cyc=61613  385 us  wire=320 us  BAUDR=4 actual=20000000 Hz
+Max SCLK both directions PASS: 10 MHz
+SPI tests completed
