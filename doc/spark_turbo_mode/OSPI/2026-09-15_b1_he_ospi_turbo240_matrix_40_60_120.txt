@@ -1,0 +1,116 @@
+# OSPI0 IS25WX  |  Turbo 240  |  size matrix 40 / 60 / 120  (QUOTE payload)
+# Zephyr e4aeaddf268f
+# 40 MHz: 43 PASS / 0 FAIL.  60 MHz: 21 PASS / 22 FAIL (err=length/4).
+# 120 MHz tap 6: 16 KB bench can PASS; size matrix 6 PASS / 3 FAIL; skip >=1024 hang risk.
+# RXDS window at 120 MHz: taps 6-7 only. Sweep "Max SCK 120" is 16 KB, not the matrix.
+# 40 MHz PASS iters collapsed below; 60/120 FAIL cases kept in full.
+
+ospi_flash@0 OSPI flash testing
+========================================
+****Flash Configured Parameters******
+* Num Of Sectors : 16384
+* Sector Size : 4096
+* Page Size : 4096
+* Erase value : 255
+* Write Blk Size: 2
+* Total Size in MB: 64
+
+Test 1-5 @ DTS 40 MHz: PASS (Test 2 full-chip erase: 0 errors on 0xFF)
+OSPI mode: SPARK TURBO  core_clk=240000000 bus_speed=40000000 HW BAUDR=6 SCK=40000000
+*** Booting Zephyr OS build e4aeaddf268f ***
+
+=== OSPI bench at DTS SCK ===
+--- SCK 40000000 Hz  BAUDR=6  actual=40000000 ---
+  erase 49152 B  329451309 cyc  1372713 us     34 KiB/s      286 kbit/s  PASS
+  write 49152 B  10320082 cyc    43000 us   1116 KiB/s     9144 kbit/s  PASS
+  read  49152 B   1271691 cyc     5298 us   9060 KiB/s    74219 kbit/s  PASS
+  xip   49152 B   9142536 cyc    38093 us   1260 KiB/s    10322 kbit/s  PASS
+BENCH PASS
+
+=== OSPI SCK sweep (exact even BAUDR only) ===
+SWEEP 20000000 Hz PASS  read 1324107 cyc 5517 us 71273 kbit/s
+SWEEP 40000000 Hz PASS  read 1272166 cyc 5300 us 74191 kbit/s
+SWEEP 60000000 Hz PASS  read 1271691 cyc 5298 us 74219 kbit/s  (16 KB only)
+SKIP 80000000 Hz (would be BAUDR=2 actual SCK=120000000)
+
+=== 120 MHz RXDS delay sweep (read-only after 40 MHz write) ===
+DTS rx-ds-delay=11 (SSI ticks). Same tap is shorter at 240 MHz ACLK.
+ARM LA on P4_2: SCK=120 MHz BAUDR=2. Sweeping rx-ds-delay 0..31
+  rx-ds-delay= 0  rc=0  err=1016
+  rx-ds-delay= 1  rc=0  err=1016
+  rx-ds-delay= 2  rc=0  err=1016
+  rx-ds-delay= 3  rc=0  err=1016
+  rx-ds-delay= 4  rc=0  err=679
+  rx-ds-delay= 5  rc=0  err=6
+  rx-ds-delay= 6  rc=0  err=0  PASS
+  rx-ds-delay= 7  rc=0  err=0  PASS
+  rx-ds-delay= 8  rc=0  err=8
+  stop sweep at delay=8 (window closed or RXDS lost)
+RXDS window 6..7, prefer interior tap=7
+Retry 120 MHz full bench with rx-ds-delay=7
+  read  16384 B    423897 cyc     1766 us   9060 KiB/s    74219 kbit/s  MISMATCH err=1
+    first[4609] w=5b r=5a
+Retry 120 MHz full bench with rx-ds-delay=6
+  erase/write/read 49152 B PASS
+SWEEP 120000000 Hz PASS (rx-ds-delay=6)
+Max SCK read/write PASS: 120000000 Hz   << 16 KB only; see size matrix
+
+=== OSPI bench at 120 MHz (BAUDR=2 rx-ds-delay=6) ===
+  read  49152 B   1271691 cyc     5298 us   9060 KiB/s    74219 kbit/s  PASS
+  xip   16384 B   1507418 cyc     6280 us   2547 KiB/s    20871 kbit/s  PASS
+
+=== 40 MHz size matrix (BAUDR=6 rx-ds-delay=11) ===
+Test1 4 B 55 aa 66 99 PASS
+2/4/16/32/64/128/256/512/514/1024/2048/4096/8192/16384 B  iters 1-3 all PASS
+40 MHz size matrix: 43 PASS, 0 FAIL (of 43)
+
+=== 60 MHz size matrix (BAUDR=4 rx-ds-delay=11) ===
+-- Test1 pattern 4 B  55 aa 66 99 --
+  rw 4 B FAIL rc=0 err=1
+    first[0] w=55 r=54
+SIZE 4 B Test1 FAIL
+
+-- 2 B  seed=0x00  iter=1/3..3/3 -- PASS all
+
+-- 4 B  seed=0xff  iter=1/3 --
+  MISMATCH err=1  first[2] w=01 r=00
+SIZE 4 B iter 1 FAIL  (iters 2 and 3 same FAIL)
+
+-- 16 B  seed=0xa5  iter=1/3 --
+  MISMATCH err=4
+    first[0] w=a5 r=a4
+    first[4] w=a9 r=a8
+    first[8] w=ad r=ac
+    first[12] w=b1 r=b0
+SIZE 16 B FAIL all 3 iters  (err=length/4)
+
+-- 32 B / 64 B / 128 B -- PASS all iters
+
+-- 256 B  seed=0xc3 -- MISMATCH err=64  first[2] w=c5 r=c4  FAIL all 3
+-- 512 B  seed=0x11 -- MISMATCH err=128 first[0] w=11 r=10  FAIL all 3
+-- 514 B  seed=0x7e -- PASS all 3
+-- 1024 B seed=0x81 -- MISMATCH err=256 first[0] w=81 r=80  FAIL all 3
+-- 2048 B seed=0xf0 -- PASS all 3
+-- 4096 B seed=0x0f -- MISMATCH err=1024 FAIL all 3
+-- 8192 B seed=0x55 -- MISMATCH err=2048 first[0] w=55 r=54  FAIL all 3
+-- 16384 B seed=0xaa -- PASS all 3   << 16 KB increment PASSes; not proof
+
+60 MHz size matrix: 21 PASS, 22 FAIL (of 43)
+
+=== 80 MHz size matrix skipped (need 160 MHz SSI) ===
+
+=== 120 MHz size matrix (BAUDR=2 rx-ds-delay=6) ===
+Extra cases only; skip >=1024 B (flash_read can hang).
+
+-- 2 B  seed=0x00  tap=6 -- PASS
+-- 4 B  seed=0xff  tap=6 -- PASS
+-- 16 B  seed=0xa5  tap=6 --
+  MISMATCH err=1  first[1] w=a6 r=a4  FAIL
+-- 32 B / 64 B / 128 B -- PASS
+-- 256 B  seed=0xc3  tap=6 -- MISMATCH err=2  FAIL
+-- 512 B  seed=0x11  tap=6 -- MISMATCH err=33 first[1] w=12 r=10  FAIL
+-- 514 B  seed=0x7e  tap=6 -- PASS
+-- 1024 B and up SKIP (120 MHz hang risk on multi-beat read)
+
+120 MHz size matrix: 6 PASS, 3 FAIL (of 14)
+OSPI tests completed

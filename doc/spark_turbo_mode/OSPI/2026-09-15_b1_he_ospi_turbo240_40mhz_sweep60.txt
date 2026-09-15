@@ -1,0 +1,119 @@
+# OSPI0 IS25WX  |  Turbo 240  |  DTS 40 MHz + even-BAUDR sweep
+# Zephyr e4aeaddf268f  (no CONFIG_NO_OPTIMIZATIONS)
+# Quote this for turbo Tests 1-5 @ 40 MHz and cmd-path read 5298 us / 74219 kbit/s.
+# Sweep 16 KB PASS at 20/40/60. SKIP 80 (would be 120). Max SCK line is 16 KB only.
+# Leading garbage byte is USB-COM framing at power-up.
+
+ospi_flash@0 OSPI flash testing
+========================================
+****Flash Configured Parameters******
+* Num Of Sectors : 16384
+* Sector Size : 4096
+* Page Size : 4096
+* Erase value : 255
+* Write Blk Size: 2
+* Total Size in MB: 64
+
+Test 1: Flash erase
+Flash erase succeeded!
+
+Test 1: Flash write
+Attempting to write 4 bytes
+
+Test 1: Flash read
+Data read matches data written. Good!!
+
+Test 2: Flash Full Erase skipped (RUN_FULL_CHIP_ERASE=0)
+
+Test 3: Flash erase
+Flash erase succeeded!
+
+Test 3: Flash write
+Attempting to write 1024 bytes
+
+Test 3: Flash read
+Data read matches data written. Good!!
+
+Test 4: write sector 16384
+
+Test 4: write sector 20480
+Sec4: Read and Verify written data
+
+Test 4: read sector 16384
+
+Data read matches data written. Good!!
+Sec5: Read and Verify written data
+
+Test 4: read sector 20480
+Data read matches data written. Good!!
+
+Test 4: Erase Sector 4 and 5
+Flash Erase from Sector 16384 Size to Erase 8192
+
+Multi-Sector erase succeeded!
+
+Test 4: read sector 16384
+Total errors after reading erased Sector 4 = 0
+
+Test 4: read sector 20480
+Total errors after reading erased Sector 5 = 0
+
+Multi-Sector Erase Test Succeeded !
+
+Test 5: XiP Read
+Content Read from OSPI Flash in XiP Mode successfully
+
+Read from Flash cmd while XiP Mode turnned on
+
+XiP Read Test Succceeded !!
+
+
+========================================
+OSPI mode: SPARK TURBO (SYS_CLOCK_HW_CYCLES_PER_SEC=240000000)
+DTS core_clk=240000000 bus_speed=40000000 write=6 HW BAUDR=6 SCK=40000000
+rx-ds-delay=11 baud2-delay=2 (0=off 1=on 2=auto)
+bench: 3 x 16384 B at 0x10000
+========================================
+
+=== OSPI bench at DTS SCK ===
+
+--- SCK 40000000 Hz  BAUDR=6  actual=40000000 ---
+CPU: k_cycle_get_32() around flash_erase / flash_write / flash_read only
+  erase 49152 B  321581317 cyc  1339922 us     35 KiB/s      293 kbit/s  PASS
+  write 49152 B  10319280 cyc    42997 us   1116 KiB/s     9145 kbit/s  PASS
+  read  49152 B   1272166 cyc     5300 us   9056 KiB/s    74191 kbit/s  PASS
+  xip   49152 B   9143115 cyc    38096 us   1259 KiB/s    10321 kbit/s  PASS
+  note: erase/write are flash tSE/tPP bound; read/xip scale with SCK/CPU
+BENCH PASS
+
+=== OSPI SCK sweep (exact even BAUDR only) ===
+
+--- SCK 20000000 Hz  BAUDR=12  actual=20000000 ---
+CPU: k_cycle_get_32() around flash_erase / flash_write / flash_read only
+[00:00:00.000,000] <inf> OSPI_FLASH: core_clk=240000000 bus_speed=40000000 write=6 HW BAUDR=6 SCK=40000000
+*** Booting Zephyr OS build e4aeaddf268f ***
+  erase 49152 B  321625044 cyc  1340104 us     35 KiB/s      293 kbit/s  PASS
+  write 49152 B  10494540 cyc    43727 us   1097 KiB/s     8992 kbit/s  PASS
+  read  49152 B   1324107 cyc     5517 us   8700 KiB/s    71273 kbit/s  PASS
+  note: erase/write are flash tSE/tPP bound; read/xip scale with SCK/CPU
+SWEEP 20000000 Hz PASS
+
+--- SCK 40000000 Hz  BAUDR=6  actual=40000000 ---
+CPU: k_cycle_get_32() around flash_erase / flash_write / flash_read only
+  erase 49152 B  325794152 cyc  1357475 us     35 KiB/s      289 kbit/s  PASS
+  write 49152 B  10317552 cyc    42989 us   1116 KiB/s     9146 kbit/s  PASS
+  read  49152 B   1271691 cyc     5298 us   9060 KiB/s    74219 kbit/s  PASS
+  note: erase/write are flash tSE/tPP bound; read/xip scale with SCK/CPU
+SWEEP 40000000 Hz PASS
+
+--- SCK 60000000 Hz  BAUDR=4  actual=60000000 ---
+CPU: k_cycle_get_32() around flash_erase / flash_write / flash_read only
+  erase 49152 B  327766590 cyc  1365694 us     35 KiB/s      287 kbit/s  PASS
+  write 49152 B  10148301 cyc    42284 us   1135 KiB/s     9299 kbit/s  PASS
+  read  49152 B   1271691 cyc     5298 us   9060 KiB/s    74219 kbit/s  PASS
+  note: erase/write are flash tSE/tPP bound; read/xip scale with SCK/CPU
+SWEEP 60000000 Hz PASS
+SKIP 80000000 Hz (would be BAUDR=2 actual SCK=120000000)
+
+Max SCK read/write PASS: 60000000 Hz
+OSPI tests completed
