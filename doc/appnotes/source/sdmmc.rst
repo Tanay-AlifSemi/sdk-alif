@@ -229,7 +229,10 @@ Alif E8 DevKit
 ^^^^^^^^^^^^^^
 
 The Alif E8 DevKit features dual Cortex-M55 cores (HE and HP). The FatFS
-sample can be built and run on either core.
+sample can be built and run on either core. Use ``-S alif-sdmmc`` for the
+SD slot (disk ``SD``). For onboard eMMC (disk ``SD2``), use ``-S alif-emmc``
+(4-bit default) or ``-S alif-emmc-8bit`` (8-bit; includes the 4-bit overlay
+plus DAT[7:4] pinmux). Do not pass both eMMC snippets.
 
 Build for SoC variant ``ae822fa0e5597xx0``, M55 HE core:
 
@@ -248,6 +251,15 @@ Build for SoC variant ``ae822fa0e5597xx0``, M55 HP core:
      -b alif_e8_dk/ae822fa0e5597xx0/rtss_hp \
      samples/subsys/fs/fs_sample/ \
      -S alif-sdmmc
+
+Onboard eMMC, 8-bit (DevKit-E8):
+
+.. code-block:: console
+
+   west build -p always \
+     -b alif_e8_dk/ae822fa0e5597xx0/rtss_hp \
+     samples/subsys/fs/fs_sample/ \
+     -S alif-emmc-8bit
 
 Once build command completes successfully, executable images will
 be generated and placed in the ``build/zephyr`` directory. Both ``.bin``

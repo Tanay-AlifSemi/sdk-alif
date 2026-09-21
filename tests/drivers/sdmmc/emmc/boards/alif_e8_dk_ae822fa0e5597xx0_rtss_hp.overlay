@@ -1,0 +1,5 @@
+/*
+ * Copyright (C) 2026 Alif Semiconductor - All Rights Reserved.
+ */
+
+#include "emmc_8bit.overlay"

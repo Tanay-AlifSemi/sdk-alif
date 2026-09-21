@@ -1,0 +1,17 @@
+common:
+  tags:
+    - drivers
+    - sdhc
+    - mmc
+    - emmc
+  harness: ztest
+  timeout: 180
+  platform_allow:
+    - alif_e8_dk/ae822fa0e5597xx0/rtss_hp
+    - alif_e8_dk/ae822fa0e5597xx0/rtss_he
+  integration_platforms:
+    - alif_e8_dk/ae822fa0e5597xx0/rtss_hp
+  filter: dt_compat_enabled("snps,dwc-sdhc")
+
+tests:
+  drivers.sdmmc.emmc.8bit: {}
